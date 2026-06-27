@@ -24,7 +24,8 @@ from .manual_import import parse_manual_csv
 
 
 def run_reddit(top_n: int = TOP_N, output_dir: str = OUTPUT_DIR,
-               limit_per_kw: int = 25, enrich: bool = True) -> list:
+               limit_per_kw: int = 25, enrich: bool = True,
+               proxy: str = None) -> list:
     """Run the full Reddit pipeline."""
     print("\n" + "=" * 60)
     print("  Lead Radar MVP — Reddit Scan")
@@ -32,12 +33,15 @@ def run_reddit(top_n: int = TOP_N, output_dir: str = OUTPUT_DIR,
 
     print(f"Keywords: {len(REDDIT_KEYWORDS)} across {len(REDDIT_SUBS)} subs")
     print(f"Limit per keyword: {limit_per_kw} posts")
+    if proxy:
+        print(f"Proxy: {proxy}")
     print()
 
     leads = search_reddit(
         keywords=REDDIT_KEYWORDS,
         subreddits=REDDIT_SUBS,
         limit_per_keyword=limit_per_kw,
+        proxy=proxy,
     )
 
     if not leads:
@@ -46,7 +50,8 @@ def run_reddit(top_n: int = TOP_N, output_dir: str = OUTPUT_DIR,
 
     if enrich:
         print(f"\nEnriching top user profiles (fetching bios)...")
-        leads = enrich_reddit_leads(leads, max_users=min(50, len(leads)))
+        leads = enrich_reddit_leads(leads, max_users=min(50, len(leads)),
+                                    proxy=proxy)
 
     print(f"\nScoring and filtering {len(leads)} leads...")
     top_leads = score_and_filter_leads(leads, top_n=top_n)
@@ -133,6 +138,8 @@ Examples:
                         help="CSV file for import command")
     parser.add_argument("--manual-csv", default="",
                         help="Additional manual CSV for 'full' command")
+    parser.add_argument("--proxy", default=None,
+                        help="HTTP/SOCKS proxy, e.g. http://127.0.0.1:7890")
 
     args = parser.parse_args()
 
@@ -142,6 +149,7 @@ Examples:
             output_dir=args.output_dir,
             limit_per_kw=args.limit_per_kw,
             enrich=not args.no_enrich,
+            proxy=args.proxy,
         )
     elif args.command == "import":
         if not args.csv_file:
@@ -155,6 +163,7 @@ Examples:
             output_dir=args.output_dir,
             limit_per_kw=args.limit_per_kw,
             enrich=not args.no_enrich,
+            proxy=args.proxy,
         )
         all_leads.extend(reddit_leads)
 

@@ -5,6 +5,7 @@ Respects rate limits and only reads public posts.
 """
 
 import json
+import os
 import time
 import urllib.parse
 import urllib.request
@@ -15,31 +16,50 @@ from .models import Lead
 USER_AGENT = "LeadRadar/0.1 (MVP research tool; public data only)"
 
 
-def _reddit_json_get(url: str, timeout: int = 15) -> Optional[dict]:
-    """Fetch JSON from Reddit with a polite user-agent."""
-    req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+def _build_opener(proxy: Optional[str] = None):
+    """Build urllib opener with optional HTTP/SOCKS proxy."""
+    handlers = []
+    if proxy:
+        handlers.append(urllib.request.ProxyHandler({"http": proxy, "https": proxy}))
+    if handlers:
+        return urllib.request.build_opener(*handlers)
+    return None
+
+
+def _reddit_json_get(url: str, timeout: int = 15,
+                     proxy: Optional[str] = None) -> Optional[dict]:
+    """Fetch JSON from Reddit with a polite user-agent and optional proxy."""
+    headers = {"User-Agent": USER_AGENT}
+    req = urllib.request.Request(url, headers=headers)
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as resp:
-            return json.loads(resp.read().decode("utf-8"))
+        if proxy:
+            opener = _build_opener(proxy)
+            with opener.open(req, timeout=timeout) as resp:
+                return json.loads(resp.read().decode("utf-8"))
+        else:
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                return json.loads(resp.read().decode("utf-8"))
     except Exception as e:
         print(f"  [warn] Reddit request failed: {e}")
         return None
 
 
-def _fetch_user_info(username: str) -> dict:
+def _fetch_user_info(username: str, proxy: Optional[str] = None) -> dict:
     """Fetch basic user profile info from Reddit."""
     url = f"https://www.reddit.com/user/{username}/about.json"
-    data = _reddit_json_get(url)
+    data = _reddit_json_get(url, proxy=proxy)
     if not data:
         return {}
     return data.get("data", {})
 
 
 def search_reddit(keywords: List[str], subreddits: List[str] = None,
-                  limit_per_keyword: int = 25, max_age_days: int = 7) -> List[Lead]:
+                  limit_per_keyword: int = 25, max_age_days: int = 7,
+                  proxy: Optional[str] = None) -> List[Lead]:
     """Search Reddit for posts matching keywords and collect leads.
 
     Only uses public search endpoints. Collects the poster as a lead candidate.
+    proxy format: "http://127.0.0.1:7890" or "socks5h://127.0.0.1:7890"
     """
     subreddits = subreddits or ["all"]
     leads_by_username: dict[str, Lead] = {}
@@ -53,7 +73,7 @@ def search_reddit(keywords: List[str], subreddits: List[str] = None,
                 f"?q={query}&restrict_sr=1&sort=relevance"
                 f"&t=week&limit={limit_per_keyword}"
             )
-            data = _reddit_json_get(url)
+            data = _reddit_json_get(url, proxy=proxy)
             if not data:
                 time.sleep(2)
                 continue
@@ -100,7 +120,8 @@ def search_reddit(keywords: List[str], subreddits: List[str] = None,
     return list(leads_by_username.values())
 
 
-def enrich_reddit_leads(leads: List[Lead], max_users: int = 50) -> List[Lead]:
+def enrich_reddit_leads(leads: List[Lead], max_users: int = 50,
+                       proxy: Optional[str] = None) -> List[Lead]:
     """Fetch user bios for top leads (limited to avoid rate limits)."""
     enriched = 0
     for lead in leads:
@@ -108,7 +129,7 @@ def enrich_reddit_leads(leads: List[Lead], max_users: int = 50) -> List[Lead]:
             break
         if lead.platform != "reddit" or lead.bio:
             continue
-        info = _fetch_user_info(lead.username)
+        info = _fetch_user_info(lead.username, proxy=proxy)
         if info:
             lead.bio = info.get("subreddit", {}).get("public_description", "")
             if not lead.bio:
