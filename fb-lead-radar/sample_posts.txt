@@ -1,0 +1,107 @@
+name: Sarah Johnson
+url: https://www.facebook.com/groups/123456/posts/789012
+group: Shopify Sellers Unite
+profile_url: https://www.facebook.com/sarah.johnson
+time: 2 hours ago
+comments: 5
+
+Hey everyone! I've been building my Shopify store for the past month and I'm almost ready to launch. I'm selling handmade jewelry and I think my product pages could look better. The layout feels off and I'm not sure if my product photos are good enough. Can someone take a look and give me feedback on the product page design? Also need help with the homepage layout, not sure what sections to include. My store is at handmadejewels.com, would really appreciate any feedback!
+---
+name: Mike Chen
+url: https://www.facebook.com/groups/123456/posts/789013
+group: Ecommerce Growth Hacks
+profile_url: https://www.facebook.com/mike.chen
+time: 5 hours ago
+comments: 23
+
+I'm getting good traffic to my store but ZERO sales. It's been 3 weeks and I've had 2000 visitors with 0 conversions. What am I doing wrong? I sell digital printables and home decor products. My website is printabledecor.com. I think maybe my product descriptions are bad? Or maybe the landing page is not converting. I need help figuring out why people are leaving without buying. No ads yet, just organic traffic from Pinterest.
+---
+name: Emma Wilson
+url: https://www.facebook.com/groups/123456/posts/789014
+group: Shopify Newbies
+profile_url: https://www.facebook.com/emma.wilson
+time: 1 day ago
+comments: 8
+
+Review my store please! I just launched my skincare shop last week and I'm not sure if it's ready. I'd love some honest feedback on the overall design and first impression. Be brutally honest! I sell handmade organic skincare products. Also, does anyone know how to make better product photos? Mine look amateur compared to other stores I've seen.
+---
+name: David Park
+url: https://www.facebook.com/groups/123456/posts/789015
+group: Dropshipping Masters
+profile_url: https://www.facebook.com/david.park
+time: 3 days ago
+comments: 45
+
+Looking for a Shopify expert who can manage my entire store. Need someone to handle everything from A-Z: product research, ad management, order fulfillment, customer service. Must have proven track record and guaranteed results. I want to make $10k/month within 3 months. Budget is flexible for the right person/agency. DM me if you can deliver results.
+---
+name: Lisa Martinez
+url: https://www.facebook.com/groups/123456/posts/789016
+group: Creative Entrepreneurs
+profile_url: https://www.facebook.com/lisa.martinez
+time: 12 hours ago
+comments: 3
+
+I need a short product video for my new handmade candle line. Nothing fancy, just 15-30 seconds showing the product and maybe some lifestyle shots. I have the product photos but I'm not good at video editing. Also need help with the product page layout to make it look more professional. My store is cozycandles.co. Any recommendations for someone who does small video projects?
+---
+name: James Brown
+url: https://www.facebook.com/groups/123456/posts/789017
+group: Shopify Developers
+profile_url: https://www.facebook.com/james.brown
+time: 6 hours ago
+comments: 12
+
+I offer professional Shopify development services. 5+ years experience with custom themes, app development, and store optimization. Specializing in high-converting store designs. DM me for a free consultation and audit. Limited spots available this month! Check out my portfolio at myagency.com
+---
+name: Amy Thompson
+url: https://www.facebook.com/groups/123456/posts/789018
+group: Etsy to Shopify Migrants
+profile_url: https://www.facebook.com/amy.thompson
+time: 1 week ago
+comments: 6
+
+I'm moving my craft business from Etsy to Shopify and I'm overwhelmed by all the design decisions. I sell handmade knit scarves and accessories. I need help with the homepage layout and product page design. My Etsy shop has been doing well but I want my own site to look more professional. Not looking for anything fancy, just clean and simple. Budget is small since I'm just starting out on my own site.
+---
+name: Ryan Taylor
+url: https://www.facebook.com/groups/123456/posts/789019
+group: Shopify SEO & Traffic
+profile_url: https://www.facebook.com/ryan.taylor
+time: 4 days ago
+comments: 31
+
+I need someone to run my Facebook and Google ads. Currently spending $500/day but not seeing great ROI. Looking for an agency or freelancer who can manage my ad accounts and guarantee a 3x ROAS. Must have experience with ecommerce brands. Also need help with SEO and building backlinks. DM me with your case studies.
+---
+name: Nicole Adams
+url: https://www.facebook.com/groups/123456/posts/789020
+group: Digital Product Sellers
+profile_url: https://www.facebook.com/nicole.adams
+time: 3 hours ago
+comments: 2
+
+Just launched my digital product store selling Canva templates and I'm not getting any sales. I've got about 500 visitors from social media but nobody's buying. I think my landing page might be the problem - it doesn't look very professional. Also my product images are just screenshots, they look really bad. Can anyone give me tips on how to make my digital product pages look better? My store is templatehub.co
+---
+name: Chris Morgan
+url: https://www.facebook.com/groups/123456/posts/789021
+group: Small Business Owners
+profile_url: https://www.facebook.com/chris.morgan
+time: 8 hours ago
+comments: 7
+
+Need help with my store's first impression. I've been told my site looks "cheap" and I want to fix that before running ads. I sell custom pet products - personalized collars, beds, etc. I just need someone to help with the homepage layout and maybe a few product pages. Nothing too complex, just wants it to look more professional and trustworthy. Budget is around $300-500 for this initial work.
+---
+name: Jessica Lee
+url: https://www.facebook.com/groups/123456/posts/789022
+group: Beauty Brand Owners
+profile_url: https://www.facebook.com/jessica.lee
+time: 2 days ago
+comments: 15
+
+Building my beauty brand Shopify store and looking for a website designer who can create a premium look. I need the full package - homepage, product pages, collections, about page, the works. I want it to look like Glossier or Fenty. Budget is $5k for the whole site. DM me with your portfolio. Must have experience with beauty brands.
+---
+name: Tom Walker
+url: https://www.facebook.com/groups/123456/posts/789023
+group: Passive Income Warriors
+profile_url: https://www.facebook.com/tom.walker
+time: 5 days ago
+comments: 67
+
+MAKE $10,000/MONTH with your own Shopify store! I have a proven system that generates passive income while you sleep. Just $97 for the full course and done-for-you store. Limited time offer - 50% off this week only! DM me for the link to get started today. Financial freedom is just one click away!
