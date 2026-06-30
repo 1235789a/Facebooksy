@@ -1,0 +1,23 @@
+name:
+url:
+group:
+profile_url:
+time:
+comments:
+
+（在这里粘贴帖子内容）
+
+---
+
+name:
+url:
+group:
+profile_url:
+time:
+comments:
+
+（第二条帖子内容）
+
+---
+
+（继续添加更多，用 --- 分隔）

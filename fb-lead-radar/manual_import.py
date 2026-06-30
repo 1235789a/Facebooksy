@@ -1,7 +1,14 @@
 import re
-from typing import Optional
+from typing import Optional, List
 
 from models import Lead
+
+
+def _clean_text(text: str) -> str:
+    text = re.sub(r'\r\n', '\n', text)
+    text = re.sub(r'\n{3,}', '\n\n', text)
+    text = text.strip()
+    return text
 
 
 def parse_manual_post(
@@ -23,58 +30,108 @@ def parse_manual_post(
     lead.comment_count = comment_count
 
     if not lead.lead_name and lead.post_text:
-        name_match = re.search(r"(?:Posted by|From|来自)\s*[:：]\s*([^\n]+)", post_text, re.IGNORECASE)
-        if name_match:
-            lead.lead_name = name_match.group(1).strip()
+        name_patterns = [
+            r"(?:Posted by|From|来自)\s*[:：]\s*([^\n]+)",
+            r"^([A-Z][a-z]+(?:\s+[A-Z][a-z]+){0,2})\s*$",
+        ]
+        for pattern in name_patterns:
+            match = re.search(pattern, lead.post_text, re.IGNORECASE | re.MULTILINE)
+            if match:
+                name = match.group(1).strip()
+                if len(name) > 2 and len(name) < 50:
+                    lead.lead_name = name
+                    break
 
     if not lead.post_url and lead.post_text:
-        url_match = re.search(r'https?://[^\s)>\]"]+', post_text)
-        if url_match:
-            lead.profile_url = lead.profile_url or ""
+        urls = re.findall(r'https?://[^\s)>\]"\'`]+', lead.post_text)
+        fb_urls = [u for u in urls if 'facebook.com' in u or 'fb.com' in u]
+        if fb_urls:
+            lead.post_url = fb_urls[0]
 
     return lead
 
 
-def import_from_text(text: str) -> list:
+def _smart_parse_chunk(chunk: str) -> dict:
+    data = {"post_text_lines": []}
+    lines = chunk.split('\n')
+
+    field_patterns = {
+        'lead_name': [r'^name\s*[:：]\s*(.+)$', r'^author\s*[:：]\s*(.+)$',
+                      r'^发帖人\s*[:：]\s*(.+)$', r'^作者\s*[:：]\s*(.+)$'],
+        'post_url': [r'^url\s*[:：]\s*(.+)$', r'^link\s*[:：]\s*(.+)$',
+                     r'^帖子链接\s*[:：]\s*(.+)$', r'^链接\s*[:：]\s*(.+)$'],
+        'group_name': [r'^group\s*[:：]\s*(.+)$', r'^群组\s*[:：]\s*(.+)$',
+                       r'^群名\s*[:：]\s*(.+)$'],
+        'profile_url': [r'^profile\s*[:：]\s*(.+)$', r'^profile_url\s*[:：]\s*(.+)$',
+                        r'^主页链接\s*[:：]\s*(.+)$', r'^个人主页\s*[:：]\s*(.+)$'],
+        'post_time': [r'^time\s*[:：]\s*(.+)$', r'^date\s*[:：]\s*(.+)$',
+                      r'^时间\s*[:：]\s*(.+)$', r'^发布时间\s*[:：]\s*(.+)$'],
+        'comment_count': [r'^comments?\s*[:：]\s*(.+)$', r'^评论数?\s*[:：]\s*(.+)$',
+                          r'^回复数?\s*[:：]\s*(.+)$'],
+    }
+
+    for line in lines:
+        line_stripped = line.strip()
+        if not line_stripped:
+            continue
+
+        matched = False
+        for field, patterns in field_patterns.items():
+            for pattern in patterns:
+                match = re.match(pattern, line_stripped, re.IGNORECASE)
+                if match:
+                    value = match.group(1).strip()
+                    if field == 'comment_count':
+                        nums = re.findall(r'\d+', value)
+                        if nums:
+                            data[field] = int(nums[0])
+                    else:
+                        data[field] = value
+                    matched = True
+                    break
+            if matched:
+                break
+
+        if not matched:
+            data["post_text_lines"].append(line_stripped)
+
+    data["post_text"] = "\n".join(data["post_text_lines"])
+    del data["post_text_lines"]
+    return data
+
+
+def import_from_text(text: str) -> List[Lead]:
+    text = _clean_text(text)
     posts = []
-    chunks = re.split(r'\n---\n|\n\*\*\*\n|\n=+\n', text.strip())
+
+    if not text:
+        return []
+
+    chunks = re.split(r'\n---\n|\n\*\*\*\n|\n=+\n|\n###\s+', text)
 
     for chunk in chunks:
         chunk = chunk.strip()
-        if not chunk:
+        if not chunk or len(chunk) < 10:
             continue
 
-        lines = chunk.split('\n')
-        data = {"post_text": ""}
-        text_lines = []
+        data = _smart_parse_chunk(chunk)
 
-        for line in lines:
-            line = line.strip()
-            if not line:
-                continue
+        if not data.get("post_text") or len(data["post_text"].strip()) < 5:
+            continue
 
-            lower = line.lower()
-            if lower.startswith("name:") or lower.startswith("author:") or lower.startswith("发帖人:"):
-                data["lead_name"] = line.split(":", 1)[1].strip()
-            elif lower.startswith("url:") or lower.startswith("link:") or lower.startswith("帖子链接:"):
-                data["post_url"] = line.split(":", 1)[1].strip()
-            elif lower.startswith("group:") or lower.startswith("群组:"):
-                data["group_name"] = line.split(":", 1)[1].strip()
-            elif lower.startswith("profile:") or lower.startswith("profile_url:") or lower.startswith("主页链接:"):
-                data["profile_url"] = line.split(":", 1)[1].strip()
-            elif lower.startswith("time:") or lower.startswith("date:") or lower.startswith("时间:"):
-                data["post_time"] = line.split(":", 1)[1].strip()
-            elif lower.startswith("comments:") or lower.startswith("评论数:"):
-                try:
-                    data["comment_count"] = int(re.findall(r'\d+', line)[0])
-                except (IndexError, ValueError):
-                    pass
-            else:
-                text_lines.append(line)
-
-        data["post_text"] = "\n".join(text_lines)
-
-        if data["post_text"]:
-            posts.append(parse_manual_post(**data))
+        lead = parse_manual_post(
+            post_text=data.get("post_text", ""),
+            lead_name=data.get("lead_name", ""),
+            post_url=data.get("post_url", ""),
+            group_name=data.get("group_name", ""),
+            profile_url=data.get("profile_url", ""),
+            post_time=data.get("post_time", ""),
+            comment_count=data.get("comment_count"),
+        )
+        posts.append(lead)
 
     return posts
+
+
+def import_from_clipboard_text(text: str) -> List[Lead]:
+    return import_from_text(text)
